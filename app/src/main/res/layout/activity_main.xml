@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_weight="4"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:weightSum="10"
+        android:layout_height="0dp">
+
+        <TextView
+            android:layout_weight="3"
+            android:text="Nhiệt độ"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="match_parent">
+        </TextView>
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graphNhietDo"
+            android:layout_weight="7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        </com.jjoe64.graphview.GraphView>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_weight="4"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:weightSum="10"
+        android:layout_height="0dp">
+
+        <TextView
+            android:layout_weight="3"
+            android:text="Độ ẩm"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="match_parent">
+        </TextView>
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graphDoAm"
+            android:layout_weight="7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        </com.jjoe64.graphview.GraphView>
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:weightSum="10"
+        android:gravity="center"
+        android:layout_height="0dp">
+
+        <Switch
+            android:id="@+id/switchQuat"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:switchMinWidth="56dp"
+            android:layout_marginRight="50dp"
+            android:checked="true"
+            android:text="ON/OFF"
+            android:textOff="OFF"
+            android:textOn="ON"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
