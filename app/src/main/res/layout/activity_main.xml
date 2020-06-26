@@ -15,13 +15,32 @@
         android:weightSum="10"
         android:layout_height="0dp">
 
-        <TextView
+        <LinearLayout
             android:layout_weight="3"
-            android:text="Nhiệt độ"
             android:layout_width="0dp"
-            android:gravity="center"
+            android:orientation="vertical"
+            android:weightSum="10"
             android:layout_height="match_parent">
+        <TextView
+            android:text="Nhiệt độ"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_weight="5"
+            android:layout_height="0dp">
         </TextView>
+
+            <TextView
+                android:id="@+id/textViewNhietDo"
+                android:layout_weight="5"
+                android:text="Nhiệt độ"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="0dp">
+            </TextView>
+
+        </LinearLayout>
+
+
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphNhietDo"
@@ -40,14 +59,32 @@
         android:weightSum="10"
         android:layout_height="0dp">
 
-        <TextView
+        <LinearLayout
             android:layout_weight="3"
-            android:text="Độ ẩm"
+            android:orientation="vertical"
             android:layout_width="0dp"
-            android:gravity="center"
+            android:weightSum="10"
             android:layout_height="match_parent">
+        <TextView
+            android:layout_weight="5"
+            android:text="Độ ẩm"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="0dp">
         </TextView>
 
+
+            <TextView
+                android:id="@+id/textViewDoAm"
+                android:layout_weight="5"
+                android:text="Độ ẩm"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="0dp">
+            </TextView>
+
+
+        </LinearLayout>
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphDoAm"
             android:layout_weight="7"
@@ -55,11 +92,38 @@
             android:layout_height="match_parent">
         </com.jjoe64.graphview.GraphView>
 
+
     </LinearLayout>
 
 
 
 
+    <LinearLayout
+        android:weightSum="3"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Trạng thái của quạt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        </TextView>
+
+        <TextView
+            android:id="@+id/textViewTrangThai"
+            android:gravity="center"
+            android:layout_weight="2"
+            android:text="ON"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        </TextView>
+
+
+    </LinearLayout>
     <LinearLayout
         android:layout_weight="1"
         android:orientation="horizontal"
@@ -69,16 +133,32 @@
         android:layout_height="0dp">
 
         <Switch
-            android:id="@+id/switchQuat"
+            android:id="@+id/switchTuDong"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:switchMinWidth="56dp"
             android:layout_marginRight="50dp"
             android:checked="true"
-            android:text="ON/OFF"
+            android:text="Tự động"
             android:textOff="OFF"
             android:textOn="ON"/>
 
+
+      <Button
+          android:id="@+id/buttonOn"
+          android:layout_width="wrap_content"
+          android:text="ON"
+
+          android:layout_height="wrap_content">
+      </Button>
+
+        <Button
+            android:id="@+id/buttonOff"
+            android:layout_width="wrap_content"
+            android:text="Off"
+            android:layout_height="wrap_content">
+
+        </Button>
     </LinearLayout>
 
 
