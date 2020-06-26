@@ -1,0 +1,220 @@
+//ok rồi đó tải về add vào đi
+#include <DHT.h>
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include "SoftwareSerial.h"
+
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+String ssid ="THOA";
+String password="KHANHTUYLOAN";
+
+SoftwareSerial esp(3, 2);// RX, TX
+
+String server = "callyourfb.000webhostapp.com";
+
+String uri = "/testapi.php"; 
+String uri1 = "/docchedo.php";
+int nhietdo = 0;
+int doam = 0;
+int chedo = 0;
+int trangthai = 0;
+int trangthai1 = 0;
+int trangthainew = 1;
+String data;
+
+const int RELAY = 10;
+const int RELED = 11;
+const int DHTPIN = 7; // đọc dữ liệu từ DHT11
+const int DHTTYPE = DHT11;
+DHT dht(DHTPIN, DHTTYPE);
+
+byte degree[8] = {0B01110,0B01010,0B01110,0B00000,0B00000,0B00000,0B00000,0B00000};
+
+void setup() {
+  
+  esp.begin(9600);
+  Serial.begin(9600);
+
+  connectWifi();
+  pinMode(DHTTYPE, INPUT);
+  pinMode(RELAY, OUTPUT);
+  pinMode(RELED, OUTPUT);
+  lcd.begin();  
+  lcd.backlight();
+  lcd.print("Nhiet do:");
+  lcd.setCursor(0,1);
+  lcd.print("Do am:");
+  
+  lcd.createChar(1, degree);
+  dht.begin();  
+  
+}
+
+void loop() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  if(trangthainew == 1){
+    if(t < 30){
+      chedo=0;
+      digitalWrite(RELAY, LOW);
+    }else{
+      chedo=1;
+      digitalWrite(RELAY, HIGH);
+    }
+  }else if(trangthainew == 0){
+    if(trangthai==0){
+      chedo=trangthai;
+      chedotat(RELAY);
+    }else if(trangthai==1){
+      chedo=trangthai;
+      chedobat(RELAY);
+    }
+//    if(trangthai1==0){
+//      chedo=trangthai1;
+//      chedotat(RELED);
+//    }else if(trangthai1==1){
+//      chedo=trangthai1;
+//      chedotat(RELED);
+//    }
+  }
+
+  
+  delay(500);
+  if (isnan(t) || isnan(h)) { } 
+  else {
+    
+    lcd.setCursor(9,0);
+    lcd.print(String(t, 1).c_str());
+    lcd.print("");
+    lcd.write(1);
+    lcd.print("C");
+    lcd.setCursor(8,1);
+    lcd.print(String(h, 1).c_str());
+    lcd.print(" %");    
+  }
+ 
+    nhietdo = t;
+    doam = h;
+    httppost();
+ 
+  delay(2000);
+  httpget();
+}
+
+void connectWifi() {
+
+  String cmd = "AT+CWJAP=\"" +ssid+"\",\"" + password + "\"";
+  
+  esp.println(cmd);
+  
+  delay(1000);
+  
+  
+  if(esp.find("OK")) {
+    Serial.println(esp.readString());
+    Serial.println("Connected!");
+    delay(1000);
+  }
+  else {
+    Serial.println("Cannot connect to wifi ! Connecting again..."); 
+    connectWifi();
+  }
+
+}
+/////////////////////////////POST METHOD///////////////////////////////
+void httppost() {
+  esp.println("AT+CIPSTART=\"TCP\",\"" + server + "\",80");//start a TCP connection.
+
+  if ( esp.find("OK")) {
+    Serial.println("TCP connection ready");
+  } 
+
+ data = "nhietdo=" + (String)nhietdo + "&doam=" + (String)doam + "&chedo=" + (String)chedo  ;
+
+String postRequest =
+"POST " + uri + " HTTP/1.0\r\n" +
+"Host: " + server + "\r\n" +
+"Accept: *" + "/" + "*\r\n" +
+"Content-Length: "+data.length()+"\r\n" +
+"Content-Type: application/x-www-form-urlencoded\r\n" +
+"\r\n"+data;
+
+  String sendCmd = "AT+CIPSEND=";//determine the number of caracters to be sent.
+
+  esp.print(sendCmd);
+  esp.println(postRequest.length() );
+  delay(200);
+  if (esp.find(">")) {
+    Serial.println("Sending..");
+    
+      unsigned long time_now = millis();
+      
+      while (millis() < time_now + 1000){
+        esp.print(postRequest);
+        delay(100);
+        if ( esp.find("SEND OK")) {
+    
+          Serial.println("Packet sent");
+         
+              if (esp.available()) {
+              
+                String response = esp.readString();
+                Serial.println(response);
+       
+              }
+              // close the connection
+        //      esp.println("AT+CIPCLOSE");
+            }
+
+    }
+  }
+}
+void httpget() {
+  esp.println("AT+CIPSTART=\"TCP\",\"" + server + "\",80");//start a TCP connection.
+  if( esp.find("OK")) {
+    Serial.println("TCP connection ready");
+  } 
+
+  String getRequest =
+  "GET " + uri1 + " HTTP/1.0\r\n" +
+  "Host: " + server + "\r\n" +
+  "Accept: *" + "/" + "*\r\n" +
+  "Content-Type: application/json\r\n" +
+  "\r\n";
+
+  String sendCmd = "AT+CIPSEND=";
+
+  esp.print(sendCmd);
+
+  esp.println(getRequest.length() );
+
+  delay(500);
+
+  if(esp.find(">")) { 
+    Serial.println("Sending.."); 
+    esp.print(getRequest);
+  
+    if( esp.find("SEND OK")) { 
+  
+      Serial.println("Packet sent");
+
+      while (esp.available()) {
+
+        String response = esp.readString();
+        Serial.println(response);
+        trangthainew = response.indexOf("trangthainew=true")>0?1:0;
+        trangthai = response.indexOf("trangthai=true")>0?1:0;
+        Serial.println(trangthainew);
+        Serial.println(trangthai);
+      }
+      esp.println("AT+CIPCLOSE");
+    }
+  }
+}
+void chedotat(int RELAY){
+   digitalWrite(RELAY, LOW);
+}
+void chedobat(int RELAY){
+   digitalWrite(RELAY, HIGH);
+}
